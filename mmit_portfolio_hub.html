@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMIT Portfolio Hub - Innovative Student Works Showcase</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        mmit: {
+                            50: '#f0f4ff',
+                            100: '#e0e9ff',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                             accent: '#8b5cf6',
+                            neon: '#06b6d4',
+                            pink: '#ec4899'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Kanit', 'Prompt', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas-Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .neon-glow {
+            box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.4), 0 0 10px -5px rgba(139, 92, 246, 0.3);
+        }
+
+        .dark .neon-glow-cyan {
+            box-shadow: 0 0 20px -3px rgba(6, 182, 212, 0.3);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .pulse-subtle {
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgba(59, 130, 246, 0.3); }
+            50% { border-color: rgba(139, 92, 246, 0.8); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300 relative overflow-x-hidden">
+
+    <!-- Background Glow Effects -->
+    <div class="fixed top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full bg-blue-500/10 dark:bg-blue-600/15 blur-[120px] pointer-events-none -z-10"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full bg-purple-500/10 dark:bg-purple-600/15 blur-[120px] pointer-events-none -z-10"></div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 glass-panel border-b transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="resetFilters()">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                        <i class="fa-solid fa-shapes text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 dark:from-blue-400 dark:via-indigo-300 dark:to-purple-400">
+                                MMIT HUB
+                            </span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
+                                PROTOTYPE
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-light">Multimedia & Information Tech</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Controls & Actions -->
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <!-- Analytics Toggle Button -->
+                    <button onclick="toggleAnalyticsDrawer()" class="relative p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300 flex items-center gap-2 text-sm font-medium">
+                        <i class="fa-solid fa-chart-pie text-indigo-500"></i>
+                        <span class="hidden md:inline">UX Analytics</span>
+                        <span id="voteCountBadge" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] text-white font-bold">0</span>
+                    </button>
+
+                    <!-- Theme Switcher -->
+                    <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300">
+                        <i class="fa-solid fa-moon text-lg dark:hidden"></i>
+                        <i class="fa-solid fa-sun text-lg hidden dark:block text-amber-400"></i>
+                    </button>
+
+                    <!-- CTA Button -->
+                    <button onclick="scrollToFeedback()" class="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-md shadow-blue-500/20 active:scale-95 transition">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span>ประเมิน UX</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Hero Section -->
+        <section class="mb-12 relative">
+            <div class="p-8 sm:p-12 rounded-3xl glass-panel relative overflow-hidden border border-slate-200/50 dark:border-slate-800/80 shadow-xl">
+                <!-- Decorative Graphic -->
+                <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="max-w-3xl relative z-10">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/60 text-indigo-600 dark:text-indigo-400 text-xs font-semibold mb-4">
+                        <i class="fa-solid fa-sparkles"></i>
+                        <span>สาขาเทคโนโลยีสารสนเทศและมัลติมีเดีย (MMIT)</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4 leading-tight">
+                        นวัตกรรมดิจิทัลมีเดีย <br class="hidden sm:block"/>
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 dark:from-blue-400 dark:via-cyan-300 dark:to-indigo-400">
+                            ผสาน UI/UX ขั้นสูง
+                        </span>
+                    </h1>
+                    <p class="text-slate-600 dark:text-slate-300 text-base sm:text-lg mb-8 font-light leading-relaxed">
+                        รวบรวมและจัดแสดงผลงานนักศึกษา MMIT ครอบคลุมการพัฒนา Web/App, 3D & Animation, Game Development และการวิจัย UX/UI พร้อมเคสศึกษาเชิงลึกแบบ Interactive
+                    </p>
+
+                    <!-- Quick Metrics Ribbon -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-200 dark:border-slate-800/80">
+                        <div>
+                            <span class="block text-2xl font-bold text-slate-900 dark:text-white" id="statProjects">6</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">ผลงานเด่น</span>
+                        </div>
+                        <div>
+                            <span class="block text-2xl font-bold text-indigo-600 dark:text-indigo-400" id="statCategories">4</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">หมวดหมู่สาขา</span>
+                        </div>
+                        <div>
+                            <span class="block text-2xl font-bold text-cyan-600 dark:text-cyan-400" id="statAvgRating">4.9</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">คะแนน UX เฉลี่ย</span>
+                        </div>
+                        <div>
+                            <span class="block text-2xl font-bold text-emerald-600 dark:text-emerald-400" id="statTotalVotes">128</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">ยอดโหวตชื่นชอบ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search, Filter & View Mode Controls -->
+        <section class="mb-8 space-y-4">
+            <div class="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
+                
+                <!-- Category Tabs -->
+                <div class="flex items-center gap-1.5 overflow-x-auto pb-2 lg:pb-0 scrollbar-none text-sm font-medium" id="categoryFilterContainer">
+                    <!-- Injected by JS -->
+                </div>
+
+                <!-- Search and View Controls -->
+                <div class="flex items-center gap-3">
+                    <!-- Search Input -->
+                    <div class="relative flex-grow sm:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" id="searchInput" oninput="handleSearch()" placeholder="ค้นหาชื่อโปรเจกต์, เทคโนโลยี..." 
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition">
+                    </div>
+
+                    <!-- View Switcher (Grid / List) -->
+                    <div class="flex items-center p-1 rounded-xl bg-slate-200/70 dark:bg-slate-800/80 border border-slate-300/50 dark:border-slate-700/50">
+                        <button onclick="setViewMode('grid')" id="viewGridBtn" class="p-2 rounded-lg text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 shadow-sm transition">
+                            <i class="fa-solid fa-border-all text-sm"></i>
+                        </button>
+                        <button onclick="setViewMode('list')" id="viewListBtn" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition">
+                            <i class="fa-solid fa-list text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Project Grid / List Showcase -->
+        <section id="projectsSection" class="mb-16">
+            <!-- Container for cards -->
+            <div id="projectsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-300">
+                <!-- Rendered dynamically via JavaScript -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16 rounded-2xl glass-card border">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-2xl">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-1">ไม่พบข้อมูลโปรเจกต์</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">ลองเปลี่ยนคำค้นหาหรือตัวกรองหมวดหมู่</p>
+                <button onclick="resetFilters()" class="px-4 py-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 rounded-xl hover:bg-indigo-100 transition">
+                    รีเซ็ตตัวกรองทั้งหมด
+                </button>
+            </div>
+        </section>
+
+        <!-- Interactive Live UX Feedback & Rating Widget Section -->
+        <section id="feedbackSection" class="mb-16 scroll-mt-24">
+            <div class="glass-panel rounded-3xl p-6 sm:p-10 border border-slate-200/70 dark:border-slate-800/80 shadow-lg relative overflow-hidden">
+                <div class="max-w-3xl">
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-500 dark:text-indigo-400 mb-2 block">
+                        <i class="fa-solid fa-vial-circle-check mr-1"></i> Interactive Feedback Widget
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-3">ร่วมส่งฟีดแบ็ก & ให้คะแนน UX/UI</h2>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base mb-8">
+                        ความคิดเห็นของคุณจะช่วยให้นักศึกษาสาขา MMIT นำไปปรับปรุงและพัฒนาประสบการณ์ผู้ใช้ (User Experience) ให้ดียิ่งขึ้น
+                    </p>
+
+                    <form id="uxFeedbackForm" onsubmit="handleFeedbackSubmit(event)" class="space-y-6">
+                        <!-- Rating Stars -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2">ความพึงพอใจด้านความสวยงามและใช้งานง่าย (UX/UI Score)</label>
+                            <div class="flex items-center gap-2" id="starRatingGroup">
+                                <template id="starTemplate">
+                                    <button type="button" class="star-btn text-2xl text-slate-300 dark:text-slate-700 hover:text-amber-400 transition-colors focus:outline-none">
+                                        <i class="fa-solid fa-star"></i>
+                                    </button>
+                                </template>
+                            </div>
+                            <input type="hidden" id="ratingInput" value="5" required>
+                        </div>
+
+                        <!-- Project Selector -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1.5 text-slate-700 dark:text-slate-300">เลือกโปรเจกต์ที่ต้องการประเมิน</label>
+                                <select id="feedbackProjectSelect" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500/50 outline-none">
+                                    <!-- Dynamic options -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1.5 text-slate-700 dark:text-slate-300">ชื่อของคุณ / นามแฝง</label>
+                                <input type="text" id="feedbackAuthor" required placeholder="เช่น สมชาย นักออกแบบ" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500/50 outline-none">
+                            </div>
+                        </div>
+
+                        <!-- Comment Textarea -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1.5 text-slate-700 dark:text-slate-300">ข้อเสนอแนะเชิง UX/UI หรือความประทับใจ</label>
+                            <textarea id="feedbackComment" rows="3" required placeholder="เช่น โทนสีและ Animation ลื่นไหลดีมาก แต่อยากให้เพิ่ม Shortcut Key สำหรับผู้ใช้งานคีย์บอร์ด..." class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500/50 outline-none resize-none"></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm shadow-md shadow-indigo-500/20 active:scale-95 transition flex items-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>ส่งความคิดเห็นแบบ Real-time</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal: Interactive UX Case Study -->
+    <div id="caseStudyModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <!-- Backdrop -->
+        <div onclick="closeModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity"></div>
+
+        <!-- Modal Box -->
+        <div class="relative w-full max-w-4xl max-h-[90vh] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col z-10 animate-in fade-in zoom-in duration-200">
+            
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-start justify-between bg-slate-50/50 dark:bg-slate-900/50">
+                <div class="flex items-center gap-3">
+                    <span id="modalCategoryBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">
+                        Category
+                    </span>
+                    <span id="modalTeam" class="text-xs text-slate-500 dark:text-slate-400">
+                        Team Name
+                    </span>
+                </div>
+                <button onclick="closeModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content (Scrollable) -->
+            <div class="p-6 sm:p-8 overflow-y-auto space-y-8 flex-grow" id="modalBody">
+                
+                <!-- Title & Banner -->
+                <div>
+                    <h2 id="modalTitle" class="text-2xl sm:text-3xl font-bold mb-3">Project Title</h2>
+                    <p id="modalTagline" class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-6"></p>
+                    
+                    <!-- Cover Image Container -->
+                    <div class="relative h-64 sm:h-80 rounded-2xl overflow-hidden bg-slate-800">
+                        <img id="modalCoverImg" src="" alt="Cover" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+                        <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white">
+                            <span class="text-xs px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md" id="modalYear">2026</span>
+                            <div class="flex items-center gap-2" id="modalTechStack">
+                                <!-- Tech icons injected JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs Navigation within Modal -->
+                <div class="border-b border-slate-200 dark:border-slate-800 flex gap-6 text-sm font-medium" id="modalTabs">
+                    <button onclick="switchModalTab('overview')" id="tabOverview" class="pb-3 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 font-semibold">Overview & Problem</button>
+                    <button onclick="switchModalTab('persona')" id="tabPersona" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">User Persona & Flow</button>
+                    <button onclick="switchModalTab('uxcomparison')" id="tabComparison" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">Before / After UX</button>
+                </div>
+
+                <!-- Modal Tab 1: Overview & Problem -->
+                <div id="modalTabContentOverview" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-5 rounded-2xl bg-rose-50 dark:bg-rose-950/20 border border-rose-200/50 dark:border-rose-900/30">
+                            <h4 class="text-sm font-bold text-rose-700 dark:text-rose-400 flex items-center gap-2 mb-2">
+                                <i class="fa-solid fa-circle-exclamation"></i> Problem Statement (โจทย์ปัญหา)
+                            </h4>
+                            <p id="modalProblem" class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed"></p>
+                        </div>
+                        <div class="p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200/50 dark:border-emerald-900/30">
+                            <h4 class="text-sm font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-2 mb-2">
+                                <i class="fa-solid fa-lightbulb"></i> UX Solution (ทางออกด้วยดีไซน์)
+                            </h4>
+                            <p id="modalSolution" class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed"></p>
+                        </div>
+                    </div>
+
+                    <!-- Key Features Matrix -->
+                    <div>
+                        <h4 class="text-sm font-bold mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-star text-amber-500"></i> ฟีเจอร์เด่นด้าน UX/UI
+                        </h4>
+                        <ul id="modalKeyFeatures" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <!-- Injected JS -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Modal Tab 2: Persona & User Flow -->
+                <div id="modalTabContentPersona" class="hidden space-y-6">
+                    <div class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row gap-5 items-center sm:items-start">
+                        <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex-shrink-0 flex items-center justify-center text-white text-2xl font-bold" id="modalPersonaAvatar">
+                            P
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2">
+                                <h4 id="modalPersonaName" class="font-bold text-base">User Name</h4>
+                                <span id="modalPersonaRole" class="text-xs px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300">Target User</span>
+                            </div>
+                            <p id="modalPersonaQuote" class="text-xs italic text-slate-500 dark:text-slate-400">"Quote Statement"</p>
+                            <p id="modalPersonaDetails" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-sm font-bold mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-diagram-project text-indigo-500"></i> User Flow Summary
+                        </h4>
+                        <div id="modalUserFlowSteps" class="flex flex-wrap items-center gap-2 text-xs">
+                            <!-- Injected JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Tab 3: Before / After UX Comparison -->
+                <div id="modalTabContentComparison" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
+                            <span class="text-xs font-bold text-rose-500 uppercase block mb-2">❌ Old UX (ก่อนปรับปรุง)</span>
+                            <ul id="modalBeforePoints" class="space-y-2 text-xs text-slate-600 dark:text-slate-400">
+                                <!-- Injected JS -->
+                            </ul>
+                        </div>
+                        <div class="p-4 rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/50 dark:bg-indigo-950/20">
+                            <span class="text-xs font-bold text-emerald-500 uppercase block mb-2">✨ Redesigned MMIT UX (หลังปรับปรุง)</span>
+                            <ul id="modalAfterPoints" class="space-y-2 text-xs text-slate-700 dark:text-slate-300">
+                                <!-- Injected JS -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <button id="modalLikeBtn" onclick="toggleModalLike()" class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 hover:border-rose-300 dark:hover:border-rose-800 text-slate-700 dark:text-slate-200 transition">
+                        <i class="fa-regular fa-heart text-rose-500" id="modalLikeIcon"></i>
+                        <span id="modalLikeCount">0</span>
+                    </button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="closeModal()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition">
+                        ปิด
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Analytics & Live Feedback Side Drawer -->
+    <div id="analyticsDrawer" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-indigo-500"></i>
+                <h3 class="font-bold text-lg">Live UX Analytics</h3>
+            </div>
+            <button onclick="toggleAnalyticsDrawer()" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <div class="p-6 overflow-y-auto space-y-6 flex-grow">
+            <!-- Summary Card -->
+            <div class="p-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg">
+                <span class="text-xs opacity-80 block mb-1">ภาพรวมผลตอบรับ UX</span>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-3xl font-extrabold" id="drawerAvgScore">4.9</span>
+                    <span class="text-xs opacity-90">/ 5.0 Rating</span>
+                </div>
+                <p class="text-xs opacity-80 mt-2">จากผู้ลงความคิดเห็นจริงทั้งหมด <span id="drawerTotalReviews">0</span> รายการ</p>
+            </div>
+
+            <!-- Category Popularity Breakdown -->
+            <div>
+                <h4 class="text-sm font-bold mb-3 text-slate-700 dark:text-slate-300">หมวดหมู่ยอดนิยม (โหวต)</h4>
+                <div class="space-y-3" id="analyticsCategoryBreakdown">
+                    <!-- Injected JS -->
+                </div>
+            </div>
+
+            <!-- Recent Live Feedbacks -->
+            <div>
+                <h4 class="text-sm font-bold mb-3 text-slate-700 dark:text-slate-300">ฟีดแบ็กล่าสุด (Live Feed)</h4>
+                <div class="space-y-3" id="recentFeedbacksList">
+                    <!-- Injected JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 hidden flex items-center gap-3 px-4 py-3 rounded-2xl glass-panel border border-indigo-500/30 shadow-xl text-sm font-medium animate-bounce">
+        <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+        <span id="toastMessage">ทำรายการสำเร็จ!</span>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // =========================================================================
+        // DATA STORE: MMIT Showcase Projects & UX Case Studies
+        // =========================================================================
+        const categories = [
+            { id: 'all', label: 'ทั้งหมด', icon: 'fa-cubes' },
+            { id: 'webapp', label: 'Web / App UX', icon: 'fa-laptop-code' },
+            { id: '3d', label: '3D & Animation', icon: 'fa-cube' },
+            { id: 'game', label: 'Game Dev', icon: 'fa-gamepad' },
+            { id: 'research', label: 'UX Research', icon: 'fa-microscope' }
+        ];
+
+        const projectsData = [
+            {
+                id: 'proj-1',
+                title: 'MMIT Campus Transit & Smart Map',
+                category: 'webapp',
+                categoryLabel: 'Web / App UX',
+                team: 'Team DigitalPulse (MMIT66)',
+                year: '2026',
+                likes: 42,
+                userLiked: false,
+                rating: 4.9,
+                thumbnail: 'https://images.unsplash.com/photo-1526498460520-4c246339dccb?auto=format&fit=crop&w=800&q=80',
+                tagline: 'แอปพลิเคชันค้นหาเส้นทางรถรับส่งในมหาวิทยาลัยด้วยข้อมูล GPS Real-time พร้อม UI รองรับโหมดประหยัดพลังงาน',
+                techStack: ['React', 'Tailwind CSS', 'Leaflet.js', 'Node.js'],
+                problem: 'นักศึกษามักพลาดรถรับส่งเนื่องจากไม่ทราบเวลามาถึงที่แน่นอน และหน้าจอแผนที่เดิมใช้งานยากบนอุปกรณ์มือถือกลางแจ้ง',
+                solution: 'ออกแบบ UI การแสดงผลแผนที่แบบ Minimal High-contrast ปรับปรุง User Flow ให้แตะเพียง 2 ครั้งก็ทราบเวลารถมาถึง',
+                keyFeatures: [
+                    'Live GPS Tracking การเดินทางของรถไฟฟ้า',
+                    'High Contrast Mode มองเห็นชัดเจนกลางแดด',
+                    'Micro-animation แจ้งเตือนเมื่อรถใกล้อยู่ในระยะ 200m',
+                    'รองรับ PWA ใช้งานได้แม้สัญญาณอินเทอร์เน็ตต่ำ'
+                ],
+                persona: {
+                    name: 'น้องเมย์ (นักศึกษาปี 1)',
+                    role: 'ผู้ใช้งานประจำวัน',
+                    quote: 'อยากรู้วิธีเดินทางไปตึกเรียนให้เร็วที่สุด โดยไม่ต้องยืนรอรถกลางแดดนานๆ',
+                    avatar: 'M',
+                    details: 'ต้องรีบเดินทางระหว่างตึกเรียนที่มีระยะห่างกัน และมีเวลาพักเปลี่ยนคาบเพียง 10 นาที'
+                },
+                userFlow: ['เปิดแอปพลิเคชัน', 'ตรวจตำแหน่งปัจจุบันอัตโนมัติ', 'เลือกตึกปลายทาง', 'แสดงเวลาและตำแหน่งรถที่เร็วที่สุด'],
+                beforeUX: [
+                    'ต้องซูมขยายแผนที่ด้วยสองมือ ลำบากเมื่อถือของ',
+                    'ตัวหนังสือเล็กเกินไป และไม่มีการแสดงผลสถานะ Real-time',
+                    'ขั้นตอนเยอะ 5-6 คลิกกว่าจะเจอสายรถ'
+                ],
+                afterUX: [
+                    'ปุ่มขนาดใหญ่ (Touch Target > 48px) กดง่ายด้วยมือเดียว',
+                    'การ์ดสรุปสายรถที่ใกล้ที่สุดลอยขึ้นมาอัตโนมัติ',
+                    'ลดขั้นตอนเหลือเพียง 2 คลิก'
+                ]
+            },
+            {
+                id: 'proj-2',
+                title: 'Cyberpunk Metamorphosis 3D Showcase',
+                category: '3d',
+                categoryLabel: '3D & Animation',
+                team: 'VFX & Craft Studio',
+                year: '2025',
+                likes: 38,
+                userLiked: false,
+                rating: 4.8,
+                thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+                tagline: 'ภาพยนตร์สั้นแอนิเมชัน 3D ผสมผสานศิลปวัฒนธรรมไทยเข้ากับสไตล์ Cyberpunk แบบอนาคต',
+                techStack: ['Blender', 'Unreal Engine 5', 'Substance Painter', 'DaVinci Resolve'],
+                problem: 'การแสดงผลชิ้นงาน 3D บนเว็บมักมีปัญหาโหลดช้า และมุมกล้องเดิมๆ ไม่สร้างประสบการณ์ร่วมให้กับผู้ชม',
+                solution: 'จัดทำระบบ Interactive 3D Web Viewer ให้ผู้เข้าชมหมุนซูมดู Lighting และ Wireframe ของโมเดลได้แบบเรียลไทม์',
+                keyFeatures: [
+                    'Real-time Lighting Switch (Day / Cyber Neon Night)',
+                    'Interactive Shader & Texture Breakdown Visualizer',
+                    'Smooth Camera Transition Points',
+                    'Optimization Render Scale สำหรับอุปกรณ์เคลื่อนที่'
+                ],
+                persona: {
+                    name: 'คุณกิตติ (Art Director)',
+                    role: 'กรรมการประเมินผลงาน',
+                    quote: 'อยากเห็นกระบวนการปั้นโมเดลและ Lighting Detail เชิงลึก ไม่ใช่แค่ภาพนิ่ง rendering',
+                    avatar: 'K',
+                    details: 'ผู้เชี่ยวชาญด้านองค์ประกอบศิลป์ ต้องการตรวจเช็กความละเอียดของ Topology และ Texture Maps'
+                },
+                userFlow: ['เข้าชมหน้า 3D Hub', 'เลือกรอบการแสดงโหมด แสง/เงา', 'คลิกจุด Hotspot บนโมเดลเพื่อดูรายละเอียด', 'สลับมุมกล้อง Cinematic'],
+                beforeUX: [
+                    'วิดีโอตัวอย่างโหลดช้าเนื่องจากไฟล์ขนาดใหญ่เกินไป',
+                    'ไม่สามารถโต้ตอบหรือหมุนดูมุมมองที่สนใจเองได้'
+                ],
+                afterUX: [
+                    'โหลดเร็วด้วยการทำ WebGL Asset Optimization',
+                    'ผู้ใช้หมุนกล้อง 360 องศาได้อิสระพร้อมข้อมูลสเปกโมเดล'
+                ]
+            },
+            {
+                id: 'proj-3',
+                title: 'Aura: Mental Health VR & Game Companion',
+                category: 'game',
+                categoryLabel: 'Game Dev',
+                team: 'MMIT Interactive Lab',
+                year: '2026',
+                likes: 56,
+                userLiked: false,
+                rating: 5.0,
+                thumbnail: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=800&q=80',
+                tagline: 'เกมบำบัดอารมณ์และฝึกสมาธิผ่านภาพบรรยากาศแฟนตาซี พร้อมระบบตอบสนองด้วยเสียงเพลงบรรเลงตามจังหวะหายใจ',
+                techStack: ['Unity', 'C#', 'Web Audio API', 'Figma'],
+                problem: 'แอปสุขภาพจิตส่วนใหญ่มุ่งเน้นการจดบันทึกข้อความ ซึ่งสร้างความเครียดหรือความน่าเบื่อให้กับผู้ใช้งานบางกลุ่ม',
+                solution: 'ใช้องค์ประกอบของเกม (Gamification) ผสาน Soundscape ผ่อนคลาย เพื่อเปลี่ยนการทำสมาธิให้กลายเป็นการผจญภัยที่น่าหลงใหล',
+                keyFeatures: [
+                    'Dynamic Audio Environment ปรับเปลี่ยนตามจังหวะการกด',
+                    'Soft Color Palette ป้องกันสายตาล้า',
+                    'Micro-interactions ตอบสนองตอบทุกการสัมผัสแบบ Haptic Feedback',
+                    'ไม่มีการแข่งขันหรือการนับเวลาถอยหลังเพื่อลดแรงกดดัน'
+                ],
+                persona: {
+                    name: 'เอก (นักศึกษาช่วงเตรียมสอบ)',
+                    role: 'ผู้ต้องการผ่อนคลายความเครียด',
+                    quote: 'ต้องการพื้นที่พักผ่อนสมอง 5 นาที โดยไม่ต้องอ่านข้อความยาวๆ',
+                    avatar: 'A',
+                    details: 'มีภาวะเครียดสะสมจากการเรียน ต้องการแอปที่ให้ความรู้สึกสงบตั้งแต่หน้าแรก'
+                },
+                userFlow: ['สวมหูฟังและเปิดเกม', 'เลือกสภาวะอารมณ์ในปัจจุบัน', 'ทำภารกิจการเดินทางของละอองแสง', 'สรุปสภาวะอารมณ์หลังเล่น'],
+                beforeUX: [
+                    'เมนูซับซ้อน มีข้อความอธิบายกติกายาวเกินไป',
+                    'สีสันฉูดฉาดทำให้แสบตาเมื่อเล่นในห้องมืด'
+                ],
+                afterUX: [
+                    'ออกแบบ UI ด้วยสไตล์ Neumorphism นุ่มนวลสบายตา',
+                    'การสอนเล่นแบบ Onboarding ผ่านการปฏิบัติจริงโดยไม่ต้องอ่าน'
+                ]
+            },
+            {
+                id: 'proj-4',
+                title: 'Elderly Accessibility Redesign Study',
+                category: 'research',
+                categoryLabel: 'UX Research',
+                team: 'UX Masters Team',
+                year: '2025',
+                likes: 29,
+                userLiked: false,
+                rating: 4.7,
+                thumbnail: 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=800&q=80',
+                tagline: 'การศึกษาวิจัยและออกแบบการโต้ตอบดิจิทัลสำหรับผู้สูงอายุ เพื่อเพิ่มความสามารถในการเข้าถึงบริการภาครัฐ',
+                techStack: ['Figma', 'Maze Testing', 'Miro', 'WCAG 2.1 Guidelines'],
+                problem: 'ผู้สูงอายุมักทำรายการผิดพลาดหรือกดยกเลิกกลางคันเนื่องจากขนาดปุ่มเล็ก ข้อความไม่ชัดเจน และไอคอนสื่อความหมายไม่ตรงกัน',
+                solution: 'สร้าง Design System เฉพาะผู้สูงวัย ปรับขนาด Touch Target, ใช้ Contrast Ratio 7:1 และเพิ่มระบบยืนยันแบบ Voice Confirm',
+                keyFeatures: [
+                    'Large Touch Target (ขั้นต่ำ 56x56 px)',
+                    'Icon + Plain Text Label ทุกจุดปฏิสัมพันธ์',
+                    'Voice feedback อ่านออกเสียงสรุปรายการ',
+                    'Undo Bar ช่วยดึงข้อมูลคืนได้ง่ายเมื่อกดผิด'
+                ],
+                persona: {
+                    name: 'คุณป้าสมศรี (อายุ 64 ปี)',
+                    role: 'ผู้สูงวัยใช้อินเทอร์เน็ต',
+                    quote: 'ตัวหนังสือเล็กอ่านยาก กลัวกดผิดแล้วเงินหาย หรือทำธุรกรรมค้างไว้',
+                    avatar: 'S',
+                    details: 'มีปัญหาเรื่องสายตายาว และใช้นิ้วแตะหน้าจอด้วยความแรงไม่สม่ำเสมอ'
+                },
+                userFlow: ['เข้าสู่ระบบด้วยหมายเลขโทรศัพท์', 'เลือกบริการด้วยไอคอนขนาดใหญ่', 'ตรวจสอบรายการสรุปอ่านง่าย', 'กดยืนยันพร้อมเสียงตอบรับ'],
+                beforeUX: [
+                    'ใช้ไอคอนเดี่ยวๆ โดยไม่มีข้อความกำกับ ทำให้ผู้สูงอายุสับสน',
+                    'สีข้อความจางเกินไป ลำบากในการอ่าน'
+                ],
+                afterUX: [
+                    'ผ่านมาตรฐาน WCAG AAA ข้อความเด่นชัด อ่านง่าย',
+                    'ผู้สูงอายุทดลองใช้งานและทำรายการสำเร็จเพิ่มขึ้น 85%'
+                ]
+            },
+            {
+                id: 'proj-5',
+                title: 'EcoTrack: Carbon Footprint Web App',
+                category: 'webapp',
+                categoryLabel: 'Web / App UX',
+                team: 'Green Tech MMIT',
+                year: '2026',
+                likes: 31,
+                userLiked: false,
+                rating: 4.8,
+                thumbnail: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80',
+                tagline: 'เว็บแอปพลิเคชันคำนวณและลดการสร้างคาร์บอนฟุตพริ้นท์ในชีวิตประจำวัน พร้อมระบบ Dashboard Visualizer ลื่นไหล',
+                techStack: ['Vue.js', 'Chart.js', 'Tailwind CSS', 'Firebase'],
+                problem: 'การคำนวณคาร์บอนส่วนใหญ่มักเป็นแบบฟอร์มคณิตศาสตร์ที่น่าเบื่อและเข้าใจยาก',
+                solution: 'เปลี่ยนตัวเลขการปล่อยคาร์บอนให้กลายเป็นภาพป่าไม้ที่เจริญเติบโตหรือเหี่ยวเฉาตามพฤติกรรมจริงของผู้ใช้',
+                keyFeatures: [
+                    'Interactive Data Chart แสดงผลด้วยอนิเมชัน Smooth Scale',
+                    'Gamified Daily Challenges เก็บแต้มปลูกต้นไม้จริง',
+                    'Quick Add Widget บันทึกกิจกรรมใน 3 วินาที',
+                    'Dark/Light Mode ปรับตามช่วงเวลาอัตโนมัติ'
+                ],
+                persona: {
+                    name: 'ท็อป (สายกรีน Gen Z)',
+                    role: 'คนรุ่นใหม่ใส่ใจสิ่งแวดล้อม',
+                    quote: 'อยากรู้ว่ากิจกรรมในแต่ละวันของตัวเองส่งผลต่อโลกมากน้อยแค่ไหนแบบเข้าใจง่าย',
+                    avatar: 'T',
+                    details: 'ชอบดูสถิติในรูปแบบ Infographic สวยงาม และแบ่งปันลง Social Media'
+                },
+                userFlow: ['เปิดหน้าแดชบอร์ด', 'กด + เพื่อเพิ่มกิจกรรม', 'เลือกประเภท (เดินทาง/อาหาร)', 'ดูผลกระทบต่อป่าไม้เสมือนจริง'],
+                beforeUX: [
+                    'กรอกแบบฟอร์มหลายขั้นตอน ตัวเลขวิเคราะห์หนาแน่นเกินไป',
+                    'ไม่มีแรงจูงใจให้กลับมาใช้งานซ้ำ'
+                ],
+                afterUX: [
+                    ' Dashboard สวยงาม เข้าใจง่ายภายใน 5 วินาที',
+                    'การ์ดสรุปผลสามารถกด Share ลง Story ได้สวยงาม'
+                ]
+            },
+            {
+                id: 'proj-6',
+                title: 'Mythical Thai Heritage AR Experience',
+                category: '3d',
+                categoryLabel: '3D & Animation',
+                team: 'Heritage Interactive',
+                year: '2025',
+                likes: 45,
+                userLiked: false,
+                rating: 4.9,
+                thumbnail: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80',
+                tagline: 'แอปพลิเคชัน AR ส่องสำรวจวรรณคดีไทย นำเสนอตัวละครสถาปัตยกรรมแบบ 3D มีชีวิตบนโลกจริง',
+                techStack: ['Three.js', 'AR.js', 'WebXR', 'Blender'],
+                problem: 'พิพิธภัณฑ์และวรรณคดีเดิมๆ ขาดความน่าสนใจสำหรับเด็กและเยาวชนรุ่นใหม่',
+                solution: 'นำเทคโนโลยี WebAR มาใช้โดยไม่ต้องดาวน์โหลดแอปเพิ่ม สามารถส่องกล้องผ่านเว็บบราวเซอร์เพื่อรับชมการแสดง 3D ได้ทันที',
+                keyFeatures: [
+                    'Zero-install WebAR ประสบการณ์ไร้รอยต่อ',
+                    'Interactive Audio Storytelling เสียงพากย์ระดับมืออาชีพ',
+                    'Gesture Control หมุน ย่อ ขยาย โมเดลด้วยนิ้วมือ',
+                    'Photo Mode ถ่ายรูปคู่กับตัวละคร 3D'
+                ],
+                persona: {
+                    name: 'คุณครูฟ้า (ครูสอนวิชาภาษาไทย)',
+                    role: 'ผู้นำเทคโนโลยีไปใช้ในการสอน',
+                    quote: 'อยากให้นักเรียนตื่นเต้นกับวรรณคดีไทยผ่านสื่อใหม่ๆ ที่เห็นภาพชัดเจน',
+                    avatar: 'F',
+                    details: 'ต้องการสื่อการสอนที่ใช้งานง่าย ไม่ยุ่งยากกับการติดตั้งแอปพลิเคชันลงเครื่องนักเรียน'
+                },
+                userFlow: ['สแกน QR Code ที่ใบงาน', 'เปิดหน้า WebAR ในบราวเซอร์', 'ส่องกล้องไปที่รูปภาพ', 'โมเดล 3D ปรากฏพร้อมเสียงบรรยาย'],
+                beforeUX: [
+                    'ต้องดาวน์โหลดแอปขนาดใหญ่กว่า 200MB ก่อนใช้งาน',
+                    'การจดจำ Marker ช้า โมเดลกระตุก'
+                ],
+                afterUX: [
+                    'สแกนปุ๊บ เล่นได้ปั๊บ ภายในเวลาไม่ถึง 3 วินาที',
+                    'การแสดงผลโมเดลลื่นไหลด้วย WebXR Framework'
+                ]
+            }
+        ];
+
+        // Feedbacks Data Store
+        let userFeedbacks = [
+            { id: 1, author: 'อาจารย์ประจำสาขา MMIT', projectTitle: 'MMIT Campus Transit', rating: 5, comment: 'การออกแบบ User Flow ทำได้กระชับมาก ชอบระบบ High Contrast Mode สำหรับใช้งานกลางแดด', time: '10 นาทีที่แล้ว' },
+            { id: 2, author: 'ณัฐวุฒิ UX Designer', projectTitle: 'Aura: Mental Health VR', rating: 5, comment: 'โทนสี Neumorphism และ Micro-interactions ละมุนเข้ากับโจทย์แอปสุขภาพจิตมากๆ ครับ', time: '1 ชั่วโมงที่แล้ว' },
+            { id: 3, author: 'พลอยนภัส (นักศึกษาปี 3)', projectTitle: 'Cyberpunk Metamorphosis', rating: 4, comment: '3D Web Viewer โหลดเร็วดีมาก แต่อยากให้เพิ่มปุ่ม Reset View เวลาหมุนกล้องเพลินค่ะ', time: '3 ชั่วโมงที่แล้ว' }
+        ];
+
+        // App State
+        let currentCategory = 'all';
+        let currentSearchQuery = '';
+        let currentViewMode = 'grid'; // 'grid' | 'list'
+        let activeModalProject = null;
+
+        // =========================================================================
+        // INITIALIZATION
+        // =========================================================================
+        window.onload = function() {
+            renderCategoryFilters();
+            renderProjectSelectOptions();
+            renderProjects();
+            initStarRating();
+            renderAnalyticsDrawerData();
+            updateHeaderMetrics();
+
+            // Check saved theme
+            if (localStorage.getItem('mmit_theme') === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+        };
+
+        // =========================================================================
+        // RENDER FUNCTIONS
+        // =========================================================================
+
+        function renderCategoryFilters() {
+            const container = document.getElementById('categoryFilterContainer');
+            container.innerHTML = categories.map(cat => `
+                <button onclick="setCategory('${cat.id}')" 
+                    class="px-4 py-2 rounded-xl flex items-center gap-2 whitespace-nowrap transition-all duration-200 ${
+                        currentCategory === cat.id 
+                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25 font-semibold' 
+                        : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }">
+                    <i class="fa-solid ${cat.icon} text-xs"></i>
+                    <span>${cat.label}</span>
+                </button>
+            `).join('');
+        }
+
+        function renderProjectSelectOptions() {
+            const select = document.getElementById('feedbackProjectSelect');
+            select.innerHTML = projectsData.map(p => `
+                <option value="${p.title}">${p.title} (${p.categoryLabel})</option>
+            `).join('');
+        }
+
+        function renderProjects() {
+            const container = document.getElementById('projectsContainer');
+            const emptyState = document.getElementById('emptyState');
+
+            // Filter Projects
+            const filtered = projectsData.filter(p => {
+                const matchCategory = currentCategory === 'all' || p.category === currentCategory;
+                const matchSearch = p.title.toLowerCase().includes(currentSearchQuery.toLowerCase()) ||
+                                    p.tagline.toLowerCase().includes(currentSearchQuery.toLowerCase()) ||
+                                    p.techStack.some(t => t.toLowerCase().includes(currentSearchQuery.toLowerCase()));
+                return matchCategory && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            // Adjust grid layout classes according to view mode
+            if (currentViewMode === 'grid') {
+                container.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-300";
+            } else {
+                container.className = "flex flex-col gap-4 transition-all duration-300";
+            }
+
+            container.innerHTML = filtered.map(project => {
+                if (currentViewMode === 'grid') {
+                    return `
+                        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800/80 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col group">
+                            <!-- Thumbnail & Badges -->
+                            <div class="relative h-48 overflow-hidden bg-slate-800 cursor-pointer" onclick="openModal('${project.id}')">
+                                <img src="${project.thumbnail}" alt="${project.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60"></div>
+                                
+                                <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[11px] font-semibold bg-slate-900/80 backdrop-blur-md text-white border border-white/10">
+                                    <i class="fa-solid fa-tag text-indigo-400 mr-1"></i> ${project.categoryLabel}
+                                </span>
+
+                                <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-white/90">
+                                    <span class="flex items-center gap-1"><i class="fa-solid fa-star text-amber-400"></i> ${project.rating}</span>
+                                    <span class="font-light text-[11px]">${project.team}</span>
+                                </div>
+                            </div>
+
+                            <!-- Content Body -->
+                            <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                                <div>
+                                    <h3 onclick="openModal('${project.id}')" class="font-bold text-lg text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition cursor-pointer line-clamp-1 mb-1">
+                                        ${project.title}
+                                    </h3>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 font-light leading-relaxed">
+                                        ${project.tagline}
+                                    </p>
+                                </div>
+
+                                <!-- Tech Stack Chips -->
+                                <div class="flex flex-wrap gap-1.5">
+                                    ${project.techStack.map(tech => `
+                                        <span class="px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60">
+                                            ${tech}
+                                        </span>
+                                    `).join('')}
+                                </div>
+
+                                <!-- Card Footer Actions -->
+                                <div class="pt-3 border-t border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between text-xs">
+                                    <button onclick="toggleLike('${project.id}')" class="flex items-center gap-1.5 text-slate-500 hover:text-rose-500 transition active:scale-90">
+                                        <i class="${project.userLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-rose-500"></i>
+                                        <span>${project.likes}</span>
+                                    </button>
+
+                                    <button onclick="openModal('${project.id}')" class="flex items-center gap-1 font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
+                                        <span>ดู UX Case Study</span>
+                                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // List View Item
+                    return `
+                        <div class="glass-card rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800/80 hover:shadow-lg transition-all flex flex-col sm:flex-row gap-4 items-center justify-between group">
+                            <div class="flex items-center gap-4 w-full sm:w-auto">
+                                <img src="${project.thumbnail}" alt="${project.title}" class="w-20 h-20 rounded-xl object-cover flex-shrink-0 cursor-pointer" onclick="openModal('${project.id}')">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300">
+                                            ${project.categoryLabel}
+                                        </span>
+                                        <span class="text-xs text-slate-400"><i class="fa-solid fa-star text-amber-400 text-[10px]"></i> ${project.rating}</span>
+                                    </div>
+                                    <h3 onclick="openModal('${project.id}')" class="font-bold text-base text-slate-900 dark:text-slate-100 hover:text-indigo-600 cursor-pointer">
+                                        ${project.title}
+                                    </h3>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 max-w-lg font-light">
+                                        ${project.tagline}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-200 dark:border-slate-800">
+                                <button onclick="toggleLike('${project.id}')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300">
+                                    <i class="${project.userLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-rose-500"></i>
+                                    <span>${project.likes}</span>
+                                </button>
+                                <button onclick="openModal('${project.id}')" class="px-4 py-2 rounded-xl text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-500 transition">
+                                    อ่าน Case Study
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        function renderAnalyticsDrawerData() {
+            // Category votes breakdown
+            const breakdownContainer = document.getElementById('analyticsCategoryBreakdown');
+            const counts = {};
+            projectsData.forEach(p => {
+                counts[p.categoryLabel] = (counts[p.categoryLabel] || 0) + p.likes;
+            });
+
+            const totalLikes = Object.values(counts).reduce((a, b) => a + b, 0);
+
+            breakdownContainer.innerHTML = Object.entries(counts).map(([label, likes]) => {
+                const pct = Math.round((likes / (totalLikes || 1)) * 100);
+                return `
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-600 dark:text-slate-400">${label}</span>
+                            <span class="font-semibold">${likes} โหวต (${pct}%)</span>
+                        </div>
+                        <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                            <div class="h-full bg-indigo-500 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Recent Feedbacks
+            const feedbackContainer = document.getElementById('recentFeedbacksList');
+            feedbackContainer.innerHTML = userFeedbacks.map(f => `
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/50 text-xs space-y-1">
+                    <div class="flex items-center justify-between font-medium">
+                        <span class="text-indigo-600 dark:text-indigo-400">${f.author}</span>
+                        <div class="text-amber-400">
+                            ${'★'.repeat(f.rating)}${'☆'.repeat(5 - f.rating)}
+                        </div>
+                    </div>
+                    <p class="text-slate-700 dark:text-slate-300 font-light">"${f.comment}"</p>
+                    <div class="flex justify-between text-[10px] text-slate-400 pt-1">
+                        <span>อ้างอิง: ${f.projectTitle}</span>
+                        <span>${f.time}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            // Drawer stats
+            document.getElementById('drawerAvgScore').innerText = (userFeedbacks.reduce((a, b) => a + b.rating, 0) / (userFeedbacks.length || 1)).toFixed(1);
+            document.getElementById('drawerTotalReviews').innerText = userFeedbacks.length;
+            document.getElementById('voteCountBadge').innerText = userFeedbacks.length;
+        }
+
+        function updateHeaderMetrics() {
+            const totalLikes = projectsData.reduce((acc, p) => acc + p.likes, 0);
+            document.getElementById('statTotalVotes').innerText = totalLikes;
+        }
+
+        // =========================================================================
+        // FILTER & SEARCH HANDLERS
+        // =========================================================================
+
+        function setCategory(catId) {
+            currentCategory = catId;
+            renderCategoryFilters();
+            renderProjects();
+        }
+
+        function handleSearch() {
+            currentSearchQuery = document.getElementById('searchInput').value;
+            renderProjects();
+        }
+
+        function setViewMode(mode) {
+            currentViewMode = mode;
+            const gridBtn = document.getElementById('viewGridBtn');
+            const listBtn = document.getElementById('viewListBtn');
+
+            if (mode === 'grid') {
+                gridBtn.className = "p-2 rounded-lg text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 shadow-sm transition";
+                listBtn.className = "p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition";
+            } else {
+                listBtn.className = "p-2 rounded-lg text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 shadow-sm transition";
+                gridBtn.className = "p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition";
+            }
+            renderProjects();
+        }
+
+        function resetFilters() {
+            currentCategory = 'all';
+            currentSearchQuery = '';
+            document.getElementById('searchInput').value = '';
+            renderCategoryFilters();
+            renderProjects();
+        }
+
+        // =========================================================================
+        // LIKE & INTERACTION LOGIC
+        // =========================================================================
+
+        function toggleLike(projId) {
+            const proj = projectsData.find(p => p.id === projId);
+            if (!proj) return;
+
+            if (proj.userLiked) {
+                proj.likes--;
+                proj.userLiked = false;
+            } else {
+                proj.likes++;
+                proj.userLiked = true;
+                triggerConfetti();
+                showToast(`ขอบคุณสำหรับโหวตใจให้ "${proj.title}"!`);
+            }
+
+            renderProjects();
+            renderAnalyticsDrawerData();
+            updateHeaderMetrics();
+
+            if (activeModalProject && activeModalProject.id === projId) {
+                updateModalLikeState();
+            }
+        }
+
+        // =========================================================================
+        // MODAL UX CASE STUDY LOGIC
+        // =========================================================================
+
+        function openModal(projId) {
+            const proj = projectsData.find(p => p.id === projId);
+            if (!proj) return;
+
+            activeModalProject = proj;
+
+            // Populate Modal Fields
+            document.getElementById('modalCategoryBadge').innerText = proj.categoryLabel;
+            document.getElementById('modalTeam').innerText = proj.team;
+            document.getElementById('modalTitle').innerText = proj.title;
+            document.getElementById('modalTagline').innerText = proj.tagline;
+            document.getElementById('modalCoverImg').src = proj.thumbnail;
+            document.getElementById('modalYear').innerText = `MMIT Portfolio ${proj.year}`;
+            
+            document.getElementById('modalTechStack').innerHTML = proj.techStack.map(t => 
+                `<span class="text-[10px] px-2 py-0.5 rounded bg-slate-900/80 border border-white/20">${t}</span>`
+            ).join('');
+
+            // Overview & Problem Tab
+            document.getElementById('modalProblem').innerText = proj.problem;
+            document.getElementById('modalSolution').innerText = proj.solution;
+            document.getElementById('modalKeyFeatures').innerHTML = proj.keyFeatures.map(f => 
+                `<li class="flex items-start gap-2 text-slate-600 dark:text-slate-300"><i class="fa-solid fa-check text-emerald-500 mt-1"></i> <span>${f}</span></li>`
+            ).join('');
+
+            // Persona Tab
+            document.getElementById('modalPersonaAvatar').innerText = proj.persona.avatar;
+            document.getElementById('modalPersonaName').innerText = proj.persona.name;
+            document.getElementById('modalPersonaRole').innerText = proj.persona.role;
+            document.getElementById('modalPersonaQuote').innerText = `"${proj.persona.quote}"`;
+            document.getElementById('modalPersonaDetails').innerText = proj.persona.details;
+
+            document.getElementById('modalUserFlowSteps').innerHTML = proj.userFlow.map((step, idx) => `
+                <div class="flex items-center gap-1.5">
+                    <span class="px-2.5 py-1 rounded-lg bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 font-semibold">${idx + 1}. ${step}</span>
+                    ${idx < proj.userFlow.length - 1 ? '<i class="fa-solid fa-chevron-right text-slate-400"></i>' : ''}
+                </div>
+            `).join('');
+
+            // Before / After Tab
+            document.getElementById('modalBeforePoints').innerHTML = proj.beforeUX.map(pt => 
+                `<li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-rose-500 mt-0.5"></i><span>${pt}</span></li>`
+            ).join('');
+            document.getElementById('modalAfterPoints').innerHTML = proj.afterUX.map(pt => 
+                `<li class="flex items-start gap-2"><i class="fa-solid fa-wand-magic-sparkles text-emerald-500 mt-0.5"></i><span>${pt}</span></li>`
+            ).join('');
+
+            updateModalLikeState();
+            switchModalTab('overview');
+
+            document.getElementById('caseStudyModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('caseStudyModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            activeModalProject = null;
+        }
+
+        function switchModalTab(tabName) {
+            const tabs = ['overview', 'persona', 'comparison'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                const content = document.getElementById(`modalTabContent${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                
+                if (t === tabName) {
+                    btn.className = "pb-3 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 font-semibold";
+                    content.classList.remove('hidden');
+                } else {
+                    btn.className = "pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200";
+                    content.classList.add('hidden');
+                }
+            });
+        }
+
+        function updateModalLikeState() {
+            if (!activeModalProject) return;
+            document.getElementById('modalLikeCount').innerText = activeModalProject.likes;
+            const icon = document.getElementById('modalLikeIcon');
+            if (activeModalProject.userLiked) {
+                icon.className = "fa-solid fa-heart text-rose-500";
+            } else {
+                icon.className = "fa-regular fa-heart text-rose-500";
+            }
+        }
+
+        function toggleModalLike() {
+            if (activeModalProject) {
+                toggleLike(activeModalProject.id);
+            }
+        }
+
+        // =========================================================================
+        // FEEDBACK FORM & STAR RATING LOGIC
+        // =========================================================================
+
+        function initStarRating() {
+            const container = document.getElementById('starRatingGroup');
+            container.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `text-2xl transition-colors focus:outline-none ${i <= 5 ? 'text-amber-400' : 'text-slate-300 dark:text-slate-700'}`;
+                btn.innerHTML = `<i class="fa-solid fa-star"></i>`;
+                btn.onclick = () => setRating(i);
+                container.appendChild(btn);
+            }
+        }
+
+        function setRating(score) {
+            document.getElementById('ratingInput').value = score;
+            const btns = document.getElementById('starRatingGroup').children;
+            for (let i = 0; i < btns.length; i++) {
+                if (i < score) {
+                    btns[i].className = "text-2xl text-amber-400 transition-colors focus:outline-none";
+                } else {
+                    btns[i].className = "text-2xl text-slate-300 dark:text-slate-700 transition-colors focus:outline-none";
+                }
+            }
+        }
+
+        function handleFeedbackSubmit(e) {
+            e.preventDefault();
+            const projectTitle = document.getElementById('feedbackProjectSelect').value;
+            const author = document.getElementById('feedbackAuthor').value;
+            const comment = document.getElementById('feedbackComment').value;
+            const rating = parseInt(document.getElementById('ratingInput').value);
+
+            const newFeedback = {
+                id: Date.now(),
+                author,
+                projectTitle,
+                rating,
+                comment,
+                time: 'เมื่อสักครู่นี้'
+            };
+
+            userFeedbacks.unshift(newFeedback);
+            renderAnalyticsDrawerData();
+            triggerConfetti();
+
+            showToast('บันทึกข้อเสนอแนะ UX ของคุณเรียบร้อยแล้ว!');
+
+            // Reset Form
+            document.getElementById('uxFeedbackForm').reset();
+            setRating(5);
+        }
+
+        // =========================================================================
+        // DRAWER & THEME UTILITIES
+        // =========================================================================
+
+        function toggleAnalyticsDrawer() {
+            const drawer = document.getElementById('analyticsDrawer');
+            drawer.classList.toggle('translate-x-full');
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('mmit_theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('mmit_theme', 'dark');
+            }
+        }
+
+        function scrollToFeedback() {
+            document.getElementById('feedbackSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3500);
+        }
+
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 50,
+                    spread: 60,
+                    origin: { y: 0.8 }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
