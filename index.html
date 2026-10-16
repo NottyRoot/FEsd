@@ -116,9 +116,47 @@
             0%, 100% { border-color: rgba(59, 130, 246, 0.3); }
             50% { border-color: rgba(139, 92, 246, 0.8); }
         }
+
+        /* Modal Entry Animation — แทนที่ class ของ tailwindcss-animate ที่ไม่ได้ติดตั้ง */
+        @keyframes modal-in {
+            from { opacity: 0; transform: scale(0.96) translateY(8px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-modal-in {
+            animation: modal-in 0.2s ease-out;
+        }
+
+        /* ซ่อน scrollbar ของแถบหมวดหมู่ (ไม่มี utility scrollbar-none ใน Tailwind ปกติ) */
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* ให้กลไก prefers-reduced-motion ทำงานกับแอนิเมชันทั้งหน้า */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300 relative overflow-x-hidden">
+
+    <!-- แจ้งเตือนเมื่อ JavaScript ไม่ทำงาน -->
+    <noscript>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+            <div class="p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 text-sm text-amber-800 dark:text-amber-300">
+                <i class="fa-solid fa-triangle-exclamation mr-2"></i>
+                หน้านี้ต้องใช้ JavaScript ในการแสดงรายการผลงานและระบบประเมิน UX — กรุณาเปิดใช้งาน JavaScript แล้วโหลดหน้าใหม่
+            </div>
+        </div>
+    </noscript>
 
     <!-- Background Glow Effects -->
     <div class="fixed top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full bg-blue-500/10 dark:bg-blue-600/15 blur-[120px] pointer-events-none -z-10"></div>
@@ -152,7 +190,7 @@
                     <button onclick="toggleAnalyticsDrawer()" class="relative p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300 flex items-center gap-2 text-sm font-medium">
                         <i class="fa-solid fa-chart-pie text-indigo-500"></i>
                         <span class="hidden md:inline">UX Analytics</span>
-                        <span id="voteCountBadge" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] text-white font-bold">0</span>
+                        <span id="voteCountBadge" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] text-white font-bold">3</span>
                     </button>
 
                     <!-- Theme Switcher -->
@@ -210,7 +248,7 @@
                             <span class="text-xs text-slate-500 dark:text-slate-400">คะแนน UX เฉลี่ย</span>
                         </div>
                         <div>
-                            <span class="block text-2xl font-bold text-emerald-600 dark:text-emerald-400" id="statTotalVotes">128</span>
+                            <span class="block text-2xl font-bold text-emerald-600 dark:text-emerald-400" id="statTotalVotes">241</span>
                             <span class="text-xs text-slate-500 dark:text-slate-400">ยอดโหวตชื่นชอบ</span>
                         </div>
                     </div>
@@ -285,12 +323,8 @@
                         <!-- Rating Stars -->
                         <div>
                             <label class="block text-sm font-medium mb-2">ความพึงพอใจด้านความสวยงามและใช้งานง่าย (UX/UI Score)</label>
-                            <div class="flex items-center gap-2" id="starRatingGroup">
-                                <template id="starTemplate">
-                                    <button type="button" class="star-btn text-2xl text-slate-300 dark:text-slate-700 hover:text-amber-400 transition-colors focus:outline-none">
-                                        <i class="fa-solid fa-star"></i>
-                                    </button>
-                                </template>
+                            <div class="flex items-center gap-2" id="starRatingGroup" role="group" aria-label="ให้คะแนน UX/UI ตั้งแต่ 1 ถึง 5 ดาว">
+                                <!-- สร้างดาวด้วย JavaScript -->
                             </div>
                             <input type="hidden" id="ratingInput" value="5" required>
                         </div>
@@ -328,12 +362,12 @@
     </main>
 
     <!-- Modal: Interactive UX Case Study -->
-    <div id="caseStudyModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div id="caseStudyModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
         <!-- Backdrop -->
         <div onclick="closeModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity"></div>
 
         <!-- Modal Box -->
-        <div class="relative w-full max-w-4xl max-h-[90vh] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col z-10 animate-in fade-in zoom-in duration-200">
+        <div class="relative w-full max-w-4xl max-h-[90vh] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col z-10 animate-modal-in">
             
             <!-- Modal Header -->
             <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-start justify-between bg-slate-50/50 dark:bg-slate-900/50">
@@ -345,7 +379,7 @@
                         Team Name
                     </span>
                 </div>
-                <button onclick="closeModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <button onclick="closeModal()" id="modalCloseBtn" aria-label="ปิดหน้าต่าง Case Study" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                     <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
             </div>
@@ -360,7 +394,7 @@
                     
                     <!-- Cover Image Container -->
                     <div class="relative h-64 sm:h-80 rounded-2xl overflow-hidden bg-slate-800">
-                        <img id="modalCoverImg" src="" alt="Cover" class="w-full h-full object-cover">
+                        <img id="modalCoverImg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="ภาพปกโปรเจกต์" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
                         <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white">
                             <span class="text-xs px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md" id="modalYear">2026</span>
@@ -372,10 +406,10 @@
                 </div>
 
                 <!-- Tabs Navigation within Modal -->
-                <div class="border-b border-slate-200 dark:border-slate-800 flex gap-6 text-sm font-medium" id="modalTabs">
-                    <button onclick="switchModalTab('overview')" id="tabOverview" class="pb-3 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 font-semibold">Overview & Problem</button>
-                    <button onclick="switchModalTab('persona')" id="tabPersona" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">User Persona & Flow</button>
-                    <button onclick="switchModalTab('uxcomparison')" id="tabComparison" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">Before / After UX</button>
+                <div class="border-b border-slate-200 dark:border-slate-800 flex gap-6 text-sm font-medium" id="modalTabs" role="tablist" aria-label="ส่วนเนื้อหา Case Study">
+                    <button onclick="switchModalTab('overview')" id="tabOverview" role="tab" aria-controls="modalTabContentOverview" aria-selected="true" class="pb-3 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 font-semibold">Overview & Problem</button>
+                    <button onclick="switchModalTab('persona')" id="tabPersona" role="tab" aria-controls="modalTabContentPersona" aria-selected="false" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">User Persona & Flow</button>
+                    <button onclick="switchModalTab('comparison')" id="tabComparison" role="tab" aria-controls="modalTabContentComparison" aria-selected="false" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">Before / After UX</button>
                 </div>
 
                 <!-- Modal Tab 1: Overview & Problem -->
@@ -471,13 +505,14 @@
     </div>
 
     <!-- Analytics & Live Feedback Side Drawer -->
-    <div id="analyticsDrawer" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+    <div id="drawerBackdrop" onclick="setDrawer(false)" aria-hidden="true" class="fixed inset-0 z-[45] bg-slate-950/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    <div id="analyticsDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true" inert class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
         <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-chart-line text-indigo-500"></i>
-                <h3 class="font-bold text-lg">Live UX Analytics</h3>
+                <h3 class="font-bold text-lg" id="drawerTitle">Live UX Analytics</h3>
             </div>
-            <button onclick="toggleAnalyticsDrawer()" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            <button onclick="setDrawer(false)" id="drawerCloseBtn" aria-label="ปิดแผง Analytics" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
@@ -487,10 +522,10 @@
             <div class="p-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg">
                 <span class="text-xs opacity-80 block mb-1">ภาพรวมผลตอบรับ UX</span>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-3xl font-extrabold" id="drawerAvgScore">4.9</span>
+                    <span class="text-3xl font-extrabold" id="drawerAvgScore">4.7</span>
                     <span class="text-xs opacity-90">/ 5.0 Rating</span>
                 </div>
-                <p class="text-xs opacity-80 mt-2">จากผู้ลงความคิดเห็นจริงทั้งหมด <span id="drawerTotalReviews">0</span> รายการ</p>
+                <p class="text-xs opacity-80 mt-2">จากผู้ลงความคิดเห็นจริงทั้งหมด <span id="drawerTotalReviews">3</span> รายการ</p>
             </div>
 
             <!-- Category Popularity Breakdown -->
@@ -512,13 +547,54 @@
     </div>
 
     <!-- Notification Toast -->
-    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 hidden flex items-center gap-3 px-4 py-3 rounded-2xl glass-panel border border-indigo-500/30 shadow-xl text-sm font-medium animate-bounce">
+    <div id="toastNotification" role="status" aria-live="polite" class="fixed bottom-6 right-6 z-[60] hidden flex items-center gap-3 px-4 py-3 rounded-2xl glass-panel border border-indigo-500/30 shadow-xl text-sm font-medium animate-bounce">
         <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
         <span id="toastMessage">ทำรายการสำเร็จ!</span>
     </div>
 
     <!-- JavaScript Application Logic -->
     <script>
+        // =========================================================================
+        // UTILITIES
+        // =========================================================================
+
+        // ป้องกัน XSS: ข้อมูลที่ผู้ใช้กรอก (ชื่อ/ความคิดเห็น) ต้อง escape ก่อนใส่ innerHTML เสมอ
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // localStorage จะ throw ได้ใน file:// บางสภาพแวดล้อม และใน Private Mode บางบราวเซอร์
+        const safeStorage = {
+            get(key) {
+                try { return localStorage.getItem(key); } catch (e) { return null; }
+            },
+            set(key, value) {
+                try { localStorage.setItem(key, value); } catch (e) { /* ไม่มี persistence ก็ยังใช้งานต่อได้ */ }
+            }
+        };
+
+        // แปลง timestamp เป็นข้อความเวลาย้อนหลังแบบไทย
+        function timeAgo(timestamp) {
+            const seconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
+            if (seconds < 60) return 'เมื่อสักครู่นี้';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} นาทีที่แล้ว`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} ชั่วโมงที่แล้ว`;
+            const days = Math.floor(hours / 24);
+            return `${days} วันที่แล้ว`;
+        }
+
+        // ดึง element แบบ fail-safe กันหน้าพังถ้ามี ID หายไป
+        function $(id) {
+            return document.getElementById(id);
+        }
+
         // =========================================================================
         // DATA STORE: MMIT Showcase Projects & UX Case Studies
         // =========================================================================
@@ -763,18 +839,24 @@
             }
         ];
 
-        // Feedbacks Data Store
+        // Feedbacks Data Store (เก็บเป็น timestamp เพื่อให้แสดงเวลาย้อนหลังได้จริง)
         let userFeedbacks = [
-            { id: 1, author: 'อาจารย์ประจำสาขา MMIT', projectTitle: 'MMIT Campus Transit', rating: 5, comment: 'การออกแบบ User Flow ทำได้กระชับมาก ชอบระบบ High Contrast Mode สำหรับใช้งานกลางแดด', time: '10 นาทีที่แล้ว' },
-            { id: 2, author: 'ณัฐวุฒิ UX Designer', projectTitle: 'Aura: Mental Health VR', rating: 5, comment: 'โทนสี Neumorphism และ Micro-interactions ละมุนเข้ากับโจทย์แอปสุขภาพจิตมากๆ ครับ', time: '1 ชั่วโมงที่แล้ว' },
-            { id: 3, author: 'พลอยนภัส (นักศึกษาปี 3)', projectTitle: 'Cyberpunk Metamorphosis', rating: 4, comment: '3D Web Viewer โหลดเร็วดีมาก แต่อยากให้เพิ่มปุ่ม Reset View เวลาหมุนกล้องเพลินค่ะ', time: '3 ชั่วโมงที่แล้ว' }
+            { id: 1, author: 'อาจารย์ประจำสาขา MMIT', projectTitle: 'MMIT Campus Transit', rating: 5, comment: 'การออกแบบ User Flow ทำได้กระชับมาก ชอบระบบ High Contrast Mode สำหรับใช้งานกลางแดด', createdAt: Date.now() - 10 * 60 * 1000 },
+            { id: 2, author: 'ณัฐวุฒิ UX Designer', projectTitle: 'Aura: Mental Health VR', rating: 5, comment: 'โทนสี Neumorphism และ Micro-interactions ละมุนเข้ากับโจทย์แอปสุขภาพจิตมากๆ ครับ', createdAt: Date.now() - 60 * 60 * 1000 },
+            { id: 3, author: 'พลอยนภัส (นักศึกษาปี 3)', projectTitle: 'Cyberpunk Metamorphosis', rating: 4, comment: '3D Web Viewer โหลดเร็วดีมาก แต่อยากให้เพิ่มปุ่ม Reset View เวลาหมุนกล้องเพลินค่ะ', createdAt: Date.now() - 3 * 60 * 60 * 1000 }
         ];
 
         // App State
+        const DEFAULT_RATING = 5;
+        const MAX_AUTHOR_LEN = 60;
+        const MAX_COMMENT_LEN = 500;
+
         let currentCategory = 'all';
         let currentSearchQuery = '';
         let currentViewMode = 'grid'; // 'grid' | 'list'
         let activeModalProject = null;
+        let isDrawerOpen = false;
+        let lastFocusedElement = null; // เก็บโฟกัสไว้คืนหลังปิด modal
 
         // =========================================================================
         // INITIALIZATION
@@ -786,13 +868,16 @@
             initStarRating();
             renderAnalyticsDrawerData();
             updateHeaderMetrics();
+            setDrawer(false);
 
             // Check saved theme
-            if (localStorage.getItem('mmit_theme') === 'light') {
+            if (safeStorage.get('mmit_theme') === 'light') {
                 document.documentElement.classList.remove('dark');
             } else {
                 document.documentElement.classList.add('dark');
             }
+
+            document.addEventListener('keydown', handleGlobalKeydown);
         };
 
         // =========================================================================
@@ -825,12 +910,15 @@
             const container = document.getElementById('projectsContainer');
             const emptyState = document.getElementById('emptyState');
 
-            // Filter Projects
+            // Filter Projects — ค้นครอบคลุมชื่อ, tagline, ทีม, โจทย์ปัญหา และเทคโนโลยี
+            const query = currentSearchQuery.trim().toLowerCase();
             const filtered = projectsData.filter(p => {
                 const matchCategory = currentCategory === 'all' || p.category === currentCategory;
-                const matchSearch = p.title.toLowerCase().includes(currentSearchQuery.toLowerCase()) ||
-                                    p.tagline.toLowerCase().includes(currentSearchQuery.toLowerCase()) ||
-                                    p.techStack.some(t => t.toLowerCase().includes(currentSearchQuery.toLowerCase()));
+                const haystack = [
+                    p.title, p.tagline, p.team, p.problem, p.categoryLabel, p.persona.name,
+                    ...p.techStack
+                ].join(' ').toLowerCase();
+                const matchSearch = query === '' || haystack.includes(query);
                 return matchCategory && matchSearch;
             });
 
@@ -855,7 +943,7 @@
                         <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800/80 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col group">
                             <!-- Thumbnail & Badges -->
                             <div class="relative h-48 overflow-hidden bg-slate-800 cursor-pointer" onclick="openModal('${project.id}')">
-                                <img src="${project.thumbnail}" alt="${project.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                <img src="${project.thumbnail}" alt="${project.title}" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60"></div>
                                 
                                 <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[11px] font-semibold bg-slate-900/80 backdrop-blur-md text-white border border-white/10">
@@ -890,7 +978,7 @@
 
                                 <!-- Card Footer Actions -->
                                 <div class="pt-3 border-t border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between text-xs">
-                                    <button onclick="toggleLike('${project.id}')" class="flex items-center gap-1.5 text-slate-500 hover:text-rose-500 transition active:scale-90">
+                                    <button onclick="toggleLike('${project.id}')" aria-pressed="${project.userLiked}" aria-label="โหวตชื่นชอบ ${escapeHtml(project.title)}" class="flex items-center gap-1.5 text-slate-500 hover:text-rose-500 transition active:scale-90">
                                         <i class="${project.userLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-rose-500"></i>
                                         <span>${project.likes}</span>
                                     </button>
@@ -908,7 +996,7 @@
                     return `
                         <div class="glass-card rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800/80 hover:shadow-lg transition-all flex flex-col sm:flex-row gap-4 items-center justify-between group">
                             <div class="flex items-center gap-4 w-full sm:w-auto">
-                                <img src="${project.thumbnail}" alt="${project.title}" class="w-20 h-20 rounded-xl object-cover flex-shrink-0 cursor-pointer" onclick="openModal('${project.id}')">
+                                <img src="${project.thumbnail}" alt="${project.title}" loading="lazy" decoding="async" class="w-20 h-20 rounded-xl object-cover flex-shrink-0 cursor-pointer" onclick="openModal('${project.id}')">
                                 <div>
                                     <div class="flex items-center gap-2 mb-1">
                                         <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300">
@@ -965,32 +1053,45 @@
                 `;
             }).join('');
 
-            // Recent Feedbacks
+            // Recent Feedbacks — escape ข้อมูลที่ผู้ใช้กรอกทุกครั้งเพื่อป้องกัน XSS
             const feedbackContainer = document.getElementById('recentFeedbacksList');
-            feedbackContainer.innerHTML = userFeedbacks.map(f => `
-                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/50 text-xs space-y-1">
-                    <div class="flex items-center justify-between font-medium">
-                        <span class="text-indigo-600 dark:text-indigo-400">${f.author}</span>
-                        <div class="text-amber-400">
-                            ${'★'.repeat(f.rating)}${'☆'.repeat(5 - f.rating)}
+            if (userFeedbacks.length === 0) {
+                feedbackContainer.innerHTML = `
+                    <p class="text-xs text-slate-400 italic p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/50">
+                        ยังไม่มีฟีดแบ็ก — เป็นคนแรกที่ร่วมประเมิน UX ได้เลย
+                    </p>`;
+            } else {
+                feedbackContainer.innerHTML = userFeedbacks.map(f => `
+                    <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/50 text-xs space-y-1">
+                        <div class="flex items-center justify-between font-medium gap-2">
+                            <span class="text-indigo-600 dark:text-indigo-400 break-words">${escapeHtml(f.author)}</span>
+                            <div class="text-amber-400 whitespace-nowrap" role="img" aria-label="ให้คะแนน ${f.rating} จาก 5 ดาว">
+                                ${'★'.repeat(f.rating)}${'☆'.repeat(5 - f.rating)}
+                            </div>
+                        </div>
+                        <p class="text-slate-700 dark:text-slate-300 font-light break-words">"${escapeHtml(f.comment)}"</p>
+                        <div class="flex justify-between text-[10px] text-slate-400 pt-1 gap-2">
+                            <span class="truncate">อ้างอิง: ${escapeHtml(f.projectTitle)}</span>
+                            <span class="whitespace-nowrap">${timeAgo(f.createdAt)}</span>
                         </div>
                     </div>
-                    <p class="text-slate-700 dark:text-slate-300 font-light">"${f.comment}"</p>
-                    <div class="flex justify-between text-[10px] text-slate-400 pt-1">
-                        <span>อ้างอิง: ${f.projectTitle}</span>
-                        <span>${f.time}</span>
-                    </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
 
             // Drawer stats
-            document.getElementById('drawerAvgScore').innerText = (userFeedbacks.reduce((a, b) => a + b.rating, 0) / (userFeedbacks.length || 1)).toFixed(1);
+            const avgScore = userFeedbacks.reduce((a, b) => a + b.rating, 0) / (userFeedbacks.length || 1);
+            document.getElementById('drawerAvgScore').innerText = avgScore.toFixed(1);
             document.getElementById('drawerTotalReviews').innerText = userFeedbacks.length;
             document.getElementById('voteCountBadge').innerText = userFeedbacks.length;
         }
 
         function updateHeaderMetrics() {
             const totalLikes = projectsData.reduce((acc, p) => acc + p.likes, 0);
+            const avgRating = projectsData.reduce((acc, p) => acc + p.rating, 0) / (projectsData.length || 1);
+
+            document.getElementById('statProjects').innerText = projectsData.length;
+            document.getElementById('statCategories').innerText = new Set(projectsData.map(p => p.category)).size;
+            document.getElementById('statAvgRating').innerText = avgRating.toFixed(1);
             document.getElementById('statTotalVotes').innerText = totalLikes;
         }
 
@@ -1030,6 +1131,49 @@
             document.getElementById('searchInput').value = '';
             renderCategoryFilters();
             renderProjects();
+        }
+
+        // =========================================================================
+        // KEYBOARD HANDLING: Esc ปิด / Focus Trap ใน Modal
+        // =========================================================================
+
+        function handleGlobalKeydown(e) {
+            const modal = document.getElementById('caseStudyModal');
+            const modalOpen = !modal.classList.contains('hidden');
+
+            if (e.key === 'Escape') {
+                if (modalOpen) {
+                    closeModal();
+                } else if (isDrawerOpen) {
+                    setDrawer(false);
+                    document.getElementById('drawerCloseBtn').focus();
+                }
+                return;
+            }
+
+            // กักโฟกัสไว้ใน modal ขณะเปิดอยู่
+            if (e.key === 'Tab' && modalOpen) {
+                trapFocus(e, modal);
+            }
+        }
+
+        function trapFocus(e, container) {
+            const focusables = Array.from(
+                container.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')
+            ).filter(el => el.offsetWidth > 0 || el.offsetHeight > 0 || el === document.activeElement);
+
+            if (focusables.length === 0) return;
+
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
         }
 
         // =========================================================================
@@ -1113,27 +1257,49 @@
             updateModalLikeState();
             switchModalTab('overview');
 
-            document.getElementById('caseStudyModal').classList.remove('hidden');
+            // จำตำแหน่งโฟกัสไว้คืนหลังปิด + ย้ายโฟกัสเข้ามาใน modal
+            lastFocusedElement = document.activeElement;
+            const modal = document.getElementById('caseStudyModal');
+            modal.classList.remove('hidden');
+            modal.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
+            document.getElementById('modalCloseBtn').focus();
         }
 
         function closeModal() {
-            document.getElementById('caseStudyModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
+            const modal = document.getElementById('caseStudyModal');
+            if (modal.classList.contains('hidden')) return;
+
+            modal.classList.add('hidden');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
             activeModalProject = null;
+
+            if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+                lastFocusedElement.focus();
+            }
+            lastFocusedElement = null;
         }
 
         function switchModalTab(tabName) {
             const tabs = ['overview', 'persona', 'comparison'];
+            // ถ้าได้ tab ที่ไม่รู้จัก ให้ถือว่าเป็น overview เพื่อไม่ให้เนื้อหาว่างเปล่า
+            const active = tabs.includes(tabName) ? tabName : 'overview';
+
             tabs.forEach(t => {
+                const isActive = t === active;
                 const btn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
                 const content = document.getElementById(`modalTabContent${t.charAt(0).toUpperCase() + t.slice(1)}`);
-                
-                if (t === tabName) {
+
+                if (!btn || !content) return;
+
+                if (isActive) {
                     btn.className = "pb-3 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 font-semibold";
+                    btn.setAttribute('aria-selected', 'true');
                     content.classList.remove('hidden');
                 } else {
                     btn.className = "pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200";
+                    btn.setAttribute('aria-selected', 'false');
                     content.classList.add('hidden');
                 }
             });
@@ -1166,8 +1332,10 @@
             for (let i = 1; i <= 5; i++) {
                 const btn = document.createElement('button');
                 btn.type = 'button';
-                btn.className = `text-2xl transition-colors focus:outline-none ${i <= 5 ? 'text-amber-400' : 'text-slate-300 dark:text-slate-700'}`;
+                btn.className = `text-2xl transition-colors focus:outline-none ${i <= DEFAULT_RATING ? 'text-amber-400' : 'text-slate-300 dark:text-slate-700'}`;
                 btn.innerHTML = `<i class="fa-solid fa-star"></i>`;
+                btn.setAttribute('aria-label', `ให้คะแนน ${i} ดาว`);
+                btn.setAttribute('aria-pressed', String(i <= DEFAULT_RATING));
                 btn.onclick = () => setRating(i);
                 container.appendChild(btn);
             }
@@ -1177,28 +1345,28 @@
             document.getElementById('ratingInput').value = score;
             const btns = document.getElementById('starRatingGroup').children;
             for (let i = 0; i < btns.length; i++) {
-                if (i < score) {
-                    btns[i].className = "text-2xl text-amber-400 transition-colors focus:outline-none";
-                } else {
-                    btns[i].className = "text-2xl text-slate-300 dark:text-slate-700 transition-colors focus:outline-none";
-                }
+                const active = i < score;
+                btns[i].className = `text-2xl transition-colors focus:outline-none ${active ? 'text-amber-400' : 'text-slate-300 dark:text-slate-700'}`;
+                btns[i].setAttribute('aria-pressed', String(active));
             }
         }
 
         function handleFeedbackSubmit(e) {
             e.preventDefault();
             const projectTitle = document.getElementById('feedbackProjectSelect').value;
-            const author = document.getElementById('feedbackAuthor').value;
-            const comment = document.getElementById('feedbackComment').value;
-            const rating = parseInt(document.getElementById('ratingInput').value);
+            const author = document.getElementById('feedbackAuthor').value.trim();
+            const comment = document.getElementById('feedbackComment').value.trim();
+            const rating = parseInt(document.getElementById('ratingInput').value, 10) || DEFAULT_RATING;
+
+            if (!author || !comment) return;
 
             const newFeedback = {
                 id: Date.now(),
-                author,
+                author: author.slice(0, MAX_AUTHOR_LEN),
                 projectTitle,
-                rating,
-                comment,
-                time: 'เมื่อสักครู่นี้'
+                rating: Math.min(5, Math.max(1, rating)),
+                comment: comment.slice(0, MAX_COMMENT_LEN),
+                createdAt: Date.now()
             };
 
             userFeedbacks.unshift(newFeedback);
@@ -1209,26 +1377,47 @@
 
             // Reset Form
             document.getElementById('uxFeedbackForm').reset();
-            setRating(5);
+            setRating(DEFAULT_RATING);
         }
 
         // =========================================================================
         // DRAWER & THEME UTILITIES
         // =========================================================================
 
-        function toggleAnalyticsDrawer() {
+        // เปิด/ปิด Analytics Drawer แบบมี state ชัดเจน — ใช้ inert เพื่อกันโฟกัสหลุดเข้าไปตอนปิดอยู่
+        function setDrawer(open) {
+            isDrawerOpen = open;
+
             const drawer = document.getElementById('analyticsDrawer');
-            drawer.classList.toggle('translate-x-full');
+            const backdrop = document.getElementById('drawerBackdrop');
+
+            drawer.classList.toggle('translate-x-full', !open);
+            drawer.setAttribute('aria-hidden', String(!open));
+            if (open) {
+                drawer.removeAttribute('inert');
+            } else {
+                drawer.setAttribute('inert', '');
+            }
+
+            backdrop.classList.toggle('opacity-0', !open);
+            backdrop.classList.toggle('pointer-events-none', !open);
+        }
+
+        function toggleAnalyticsDrawer() {
+            setDrawer(!isDrawerOpen);
+            if (isDrawerOpen) {
+                document.getElementById('drawerCloseBtn').focus();
+            }
         }
 
         function toggleTheme() {
             const html = document.documentElement;
             if (html.classList.contains('dark')) {
                 html.classList.remove('dark');
-                localStorage.setItem('mmit_theme', 'light');
+                safeStorage.set('mmit_theme', 'light');
             } else {
                 html.classList.add('dark');
-                localStorage.setItem('mmit_theme', 'dark');
+                safeStorage.set('mmit_theme', 'dark');
             }
         }
 
