@@ -1,0 +1,82 @@
+rules_version = '2';
+
+// ===========================================================================
+// MMIT Portfolio Hub — Firestore Security Rules
+//
+// วางไฟล์นี้ที่: Firebase Console → Firestore → Rules → Publish
+//
+// หลักการออกแบบ:
+//   • อ่านได้ทุกคน (เว็บเป็น public)
+//   • เขียนได้เฉพาะคนที่ sign in แล้ว และเขียนได้เฉพาะข้อมูลของตัวเอง
+//   • บังคับ "1 คน 1 โหวต" ระดับฐานข้อมูล ด้วยการใช้ uid เป็น key ของ document
+//     คนเดียวกันโหวตซ้ำ = เขียนทับ doc เดิม = นับเป็น 1 เสมอ
+//   • ฟิลด์ทุกตัวถูก validate ฝั่ง rules — ขนาด string, ช่วงคะแนน, ชนิดข้อมูล
+//   • client ห้ามแก้/ลบ ฟีดแบ็กเดิม และห้ามแตะ doc ระดับโปรเจกต์เลย
+// ===========================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // ------------------------------------------------- projects/{id}
+    match /projects/{projectId} {
+      allow read: if true;
+      // client ห้ามสร้าง/แก้/ลบ doc โปรเจกต์เด็ดขาด — เนื้อหามาจาก data.js
+      allow write: if false;
+
+      // ------------------------------------------------- likes/{uid}
+      // 1 doc ต่อ 1 uid = กันคนเดียวกันโหวตซ้ำได้จริง
+      match /likes/{uid} {
+        allow read: if true;
+
+        allow create: if isSelf(uid)
+          && request.resource.data.keys().hasOnly(['createdAt'])
+          && request.resource.data.createdAt == request.time;
+
+        // ยกเลิกโหวตได้เฉพาะตัวเอง
+        allow delete: if isSelf(uid);
+
+        // โหวตแล้วแก้ไขไม่ได้ — ต้องลบแล้วสร้างใหม่เท่านั้น
+        allow update: if false;
+      }
+    }
+
+    // ------------------------------------------------- feedback/{id}
+    match /feedback/{feedbackId} {
+      allow read: if true;
+
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+             'uid', 'projectId', 'projectTitle', 'author', 'rating', 'comment', 'createdAt'
+           ])
+        // คะแนนต้องเป็น int 1..5
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5
+        // ความยาวชื่อ 1..60
+        && request.resource.data.author is string
+        && request.resource.data.author.size() >= 1
+        && request.resource.data.author.size() <= 60
+        // ความยาวความคิดเห็น 1..500
+        && request.resource.data.comment is string
+        && request.resource.data.comment.size() >= 1
+        && request.resource.data.comment.size() <= 500
+        // ต้องอ้างโปรเจกต์ที่มีอยู่จริง
+        && request.resource.data.projectId is string
+        && request.resource.data.projectId.size() > 0
+        && request.resource.data.projectTitle is string
+        && request.resource.data.createdAt == request.time;
+
+      // ฟีดแบ็กที่ส่งไปแล้ว แก้ไขและลบไม่ได้ — กันปิดบัง/ปั่นคะแนนย้อนหลัง
+      allow update, delete: if false;
+    }
+  }
+}

@@ -1,0 +1,15 @@
+# ===========================================================================
+# Firebase credentials — ห้าม commit เด็ดขาด
+# ไฟล์นี้มี API key ของคุณ ถ้าหลุดขึ้น GitHub (repo เป็น public)
+# คนอื่นจะยิง Firestore ของคุณได้โดยตรง
+#
+# วิธีใช้: copy จาก firebase-config.example.js แล้วเติมค่าจริงของคุณเอง
+# ===========================================================================
+assets/js/firebase-config.js
+
+# ไฟล์ IDE / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
