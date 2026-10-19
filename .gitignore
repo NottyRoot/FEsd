@@ -7,6 +7,9 @@
 # ===========================================================================
 assets/js/firebase-config.js
 
+# โฟลเดอร์ build ชั่วคราวของ deploy.ps1
+.deploy/
+
 # ไฟล์ IDE / OS
 .DS_Store
 Thumbs.db
