@@ -197,14 +197,30 @@ try {
 
     $pages = $null
     try { $pages = Invoke-RestMethod -Uri "https://api.github.com/repos/$Owner/$Repo/pages" -Headers $H } catch { }
+
+    if (-not $pages) {
+        # Pages ยังไม่ถูกเปิด → เปิดให้เลย ชี้ไปที่ gh-pages ที่เพิ่ง push ไป
+        try {
+            Write-Host "   Pages ยังไม่ถูกเปิด — กำลังเปิดให้..." -ForegroundColor Yellow
+            $pages = Invoke-RestMethod -Uri "https://api.github.com/repos/$Owner/$Repo/pages" `
+                -Headers $H -Method Post -ContentType 'application/json' `
+                -Body '{"source":{"branch":"gh-pages","path":"/"}}'
+            Write-Host "   เปิด Pages แล้ว ✓" -ForegroundColor Green
+        }
+        catch {
+            Write-Host "   เปิด Pages อัตโนมัติไม่สำเร็จ ($($_.Exception.Message))" -ForegroundColor Yellow
+            Write-Host "   เปิดเองที่ Settings → Pages → Source = Branch: gh-pages / (root)" -ForegroundColor Yellow
+        }
+    }
+
     if ($pages) {
         Write-Host "   Pages source          : $($pages.source.branch) / $($pages.path)"
         Write-Host "   Pages url             : $($pages.html_url)"
         if ($pages.source.branch -ne 'gh-pages') {
             Write-Host "   ⚠ Pages ยังไม่ได้ชี้มา gh-pages — ตั้งที่ Settings → Pages → Source = gh-pages" -ForegroundColor Yellow
         }
-    } else {
-        Write-Host "   Pages ยังไม่ถูกเปิด — ไปที่ Settings → Pages → Source = Branch: gh-pages / (root)" -ForegroundColor Yellow
+        # Pages เพิ่งถูกเปิด ต้องรอ GitHub build สักครู่ก่อนเว็บเข้าถึงได้
+        Write-Host "   รอ ~1 นาทีแล้วเปิด URL ได้เลย (build ครั้งแรกใช้เวลาสักครู่)" -ForegroundColor Yellow
     }
     Write-Host "   main ยังไม่มี config  : $(-not ((Invoke-RestMethod -Uri "https://api.github.com/repos/$Owner/$Repo/git/trees/main?recursive=1" -Headers $H).tree.path -contains 'assets/js/firebase-config.js'))"
 }
