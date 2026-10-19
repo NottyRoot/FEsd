@@ -70,8 +70,55 @@ copy assets\js\firebase-config.example.js assets\js\firebase-config.js
 รีเฟรชหน้า → แถบสีเหลืองจะหายไป ตัวเลขทั้งหมดจะเป็น 0 รอคนโหวตจริง
 
 > ⚠️ `assets/js/firebase-config.js` ถูก `.gitignore` กันไว้แล้ว จึง commit ขึ้น GitHub ไม่ได้โดยไม่ตั้งใจ
-> บน GitHub จะมีแค่ `firebase-config.example.js` (ค่า placeholder) — ถ้า deploy บน GitHub Pages
-> ให้ copy example ไปเป็นไฟล์จริงบนเครื่องที่ build หรือเติมค่าตอน deploy เอง
+> บน GitHub จะมีแค่ `firebase-config.example.js` (ค่า placeholder)
+
+---
+
+## 6. Deploy ขึ้น GitHub Pages
+
+GitHub Pages **ไม่เอาไฟล์ที่ gitignore ขึ้นไปด้วย** ถ้า push ตรงๆ เว็บจะไม่มี `firebase-config.js`
+และจะค้างอยู่ใน Local Demo Mode ตลอด จึงต้องใช้ `deploy.ps1`
+
+```powershell
+cd "C:\Users\Notty\Desktop\Portfolio"
+.\deploy.ps1
+```
+
+สิ่งที่ script ทำ:
+
+| ขั้น | ทำอะไร |
+|---|---|
+| 1 | ตรวจว่า config มีค่าจริง (ไม่ใช่ `PASTE_`) และ `apiKey` ขึ้นต้น `AIza` |
+| 2 | ตรวจว่า working tree สะอาดและอยู่บน branch `main` |
+| 3 | build ไฟล์ลง `.deploy/` แล้วฉีด `firebase-config.js` จริงเข้าไป |
+| 4 | push ขึ้น branch `gh-pages` แบบ orphan (สร้างใหม่ทุกครั้ง) |
+| 5 | เช็คผลบน GitHub และเปิด Pages ให้อัตโนมัติถ้ายังไม่ได้เปิด |
+
+ดู build ก่อนโดยไม่ push:
+
+```powershell
+.\deploy.ps1 -DryRun
+```
+
+**ผลลัพธ์:**
+
+```
+main      -> ไม่มี config เลย ใช้ดู source ได้สะอาด
+gh-pages  -> มี config ซึ่งจำเป็นต้อง public อยู่แล้ว (Pages serve จากตรงนี้)
+```
+
+> ⚠️ **ความจริงที่ควรรู้:** Firebase web API key **เป็น public โดยการออกแบบ**
+> เพราะ browser ทุกเครื่องที่เปิดเว็บต้องอ่านค่านี้ได้ จึงไม่มีทางซ่อนไว้ได้จริง
+> การแยก `main` ออกจาก `gh-pages` แค่ทำให้ source history สะอาด
+> ความปลอดภัยที่แท้จริงมาจาก **Firebase Security Rules** ใน `firestore.rules`
+> ซึ่งคุณวางไปแล้วในขั้นตอน 4 ถ้าข้ามขั้นตอนนั้น database จะเปิดให้ใครเขียนได้หมด
+
+ใช้ token อะไร push — script อ่านจาก environment variable `GH_TOKEN` หรือส่ง `-Token`:
+```powershell
+$env:GH_TOKEN = "ghp_xxxxxxxx"
+.\deploy.ps1
+```
+Token ถูกส่งแบบ one-shot ผ่าน HTTP header เท่านั้น ไม่ถูกเขียนลง `.git/config` หรือ remote URL
 
 ---
 
@@ -80,14 +127,15 @@ copy assets\js\firebase-config.example.js assets\js\firebase-config.js
 ```
 index.html
 firestore.rules                    ← คัดลอกไปวางใน Firebase Console
+deploy.ps1                         ← build + push ขึ้น GitHub Pages
 SETUP.md                           ← คู่มือตั้งค่า
-.gitignore                         ← กัน firebase-config.js หลุดขึ้น GitHub
+.gitignore                         ← กัน firebase-config.js และ .deploy/ หลุดขึ้น GitHub
 assets/
 ├── css/style.css                  ← glassmorphism, keyframes, reduced-motion
 └── js/
     ├── data.js                    ← เนื้อหาโปรเจกต์ล้วน (ไม่มีตัวเลข)
     ├── firebase-config.example.js ← template ที่ commit ขึ้น GitHub ได้
-    ├── firebase-config.js         ← ⚠️ คุณสร้างเองจาก example, ไม่ขึ้น GitHub
+    ├── firebase-config.js         ← ⚠️ คุณสร้างเองจาก example, ไม่ขึ้น main
     ├── store.js                   ← data layer: Firestore + local fallback
     └── app.js                     ← logic หน้าเว็บ
 ```
